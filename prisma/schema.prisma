@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model comments {
+  comment_id   Int       @id @default(autoincrement())
+  user_id      Int?
+  image_id     Int?
+  comment_date DateTime? @db.Date
+  content      String    @db.VarChar(255)
+  user         user?     @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "comments_ibfk_1")
+  images       images?   @relation(fields: [image_id], references: [image_id], onDelete: NoAction, onUpdate: NoAction, map: "comments_ibfk_2")
+
+  @@index([image_id], map: "image_id")
+  @@index([user_id], map: "user_id")
+}
+
+model images {
+  image_id     Int            @id @default(autoincrement())
+  name         String         @db.VarChar(255)
+  url          String         @db.VarChar(255)
+  desciption   String?        @db.VarChar(255)
+  user_id      Int?
+  comments     comments[]
+  user         user?          @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "images_ibfk_1")
+  store_images store_images[]
+
+  @@index([user_id], map: "user_id")
+}
+
+model store_images {
+  user_id    Int
+  image_id   Int
+  store_date DateTime? @db.Date
+  user       user      @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "store_images_ibfk_1")
+  images     images    @relation(fields: [image_id], references: [image_id], onDelete: NoAction, onUpdate: NoAction, map: "store_images_ibfk_2")
+
+  @@id([user_id, image_id])
+  @@index([image_id], map: "image_id")
+}
+
+model user {
+  user_id      Int            @id @default(autoincrement())
+  full_name    String         @db.VarChar(255)
+  email        String         @db.VarChar(255)
+  password     String         @db.VarChar(255)
+  avatar       String?        @db.VarChar(255)
+  birth_date   DateTime?      @db.Date
+  comments     comments[]
+  images       images[]
+  store_images store_images[]
+}
