@@ -24,9 +24,7 @@ async function bootstrap() {
 
     const config = new DocumentBuilder()
         .setTitle('CAPSTONE ORM PINTEREST')
-        .addBearerAuth({
-            type: 'http', scheme: 'bearer', bearerFormat: "Token"
-        }, 'access-token')
+        .addBearerAuth()
         .setVersion('1.0')
         .build();
 
