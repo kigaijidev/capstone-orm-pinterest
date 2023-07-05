@@ -55,3 +55,10 @@ model user {
   images       images[]
   store_images store_images[]
 }
+
+model blacklist {
+  blacklist_id Int      @id @default(autoincrement())
+  cache_id     String   @unique(map: "cache_id") @default("") @db.VarChar(255)
+  token        String   @unique(map: "token") @default("") @db.VarChar(512)
+  expiredAt    DateTime @db.DateTime(0)
+}
