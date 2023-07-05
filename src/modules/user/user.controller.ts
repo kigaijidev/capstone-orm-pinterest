@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
@@ -13,7 +13,8 @@ export class UserController {
 
     @HttpCode(HttpStatus.OK)
     @Get('')
-    async list() {
+    async list(@Req() request) {
+        console.log(request);
         return await this.userService.list();
     }
 

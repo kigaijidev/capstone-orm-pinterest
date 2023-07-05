@@ -9,12 +9,14 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { UserAlreadyExistException } from './exceptions/user-already-exist.exception';
 import { InvalidCredentialException } from './exceptions/invalid-credential.exception';
+import { BlacklistService } from './blacklist.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
+    private readonly blacklistService: BlacklistService
   ) {}
 
   prisma = new PrismaClient()
@@ -76,9 +78,11 @@ export class AuthService {
     };
   }
 
-  async logout() {
-    // Perform logout actions, such as invalidating tokens, etc.
-    // For example, you can maintain a blacklist of invalidated tokens
-    // associated with the user in the database or cache.
+  async logout(token: string) {
+    const tokenWithoutBearer = token.replace('Bearer ', '');
+    const { exp, cacheId } = this.jwtService.decode(tokenWithoutBearer) as { exp: number, cacheId: string };
+    const expiredAt = new Date(exp * 1000);
+    await this.blacklistService.addTokenToBlacklist(cacheId, tokenWithoutBearer, expiredAt);
+    return 'Logout'
   }
 }
