@@ -3,7 +3,7 @@ import { ImageController } from './image.controller';
 import { ImageService } from './image.service';
 
 @Module({
-  controllers: [ImageController],
-  providers: [ImageService]
+	controllers: [ImageController],
+	providers: [ImageService],
 })
 export class ImageModule {}
