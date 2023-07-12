@@ -8,6 +8,7 @@ import * as morgan from 'morgan';
 
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { PrismaClient } from '@prisma/client';
 
 async function bootstrap() {
 	dotenv.config();
@@ -31,6 +32,18 @@ async function bootstrap() {
 	const document = SwaggerModule.createDocument(app, config);
 	SwaggerModule.setup('api', app, document);
 
-	await app.listen(process.env.APP_PORT);
+	const prisma = new PrismaClient();
+	try {
+		await prisma.$connect();
+		console.log('Prisma connected to the database.');
+
+		await app.listen(process.env.APP_PORT, () => {
+			console.log('Capstone Pinterest started successfully.');
+		});
+		// Tiếp tục khởi động ứng dụng NestJS
+	} catch (error) {
+		console.error('Failed to connect to the database:', error);
+		// Ngừng khởi động ứng dụng NestJS hoặc thực hiện các hành động khác khi kết nối thất bại
+	}
 }
 bootstrap();

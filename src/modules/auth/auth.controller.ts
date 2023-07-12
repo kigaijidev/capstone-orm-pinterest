@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, UseGuards, Req, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, Get, UseGuards, Req, HttpCode, HttpStatus, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -7,6 +7,7 @@ import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 
 @ApiTags('Auth')
 @Controller('')
+@UsePipes(new ValidationPipe())
 export class AuthController {
     constructor(private readonly authService: AuthService) {}
 
@@ -14,8 +15,7 @@ export class AuthController {
     @ApiBody({ type: RegisterDto })
     @Post('sign-up')
     async signUp(@Body() registerDto: RegisterDto) {
-        await this.authService.signUp(registerDto);
-        return { message: 'User registered successfully' };
+        return await this.authService.signUp(registerDto);
     }
 
     @HttpCode(HttpStatus.OK)
