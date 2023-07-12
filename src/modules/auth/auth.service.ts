@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { PrismaClient } from '@prisma/client';
@@ -6,7 +6,6 @@ import * as bcrypt from "bcrypt";
 
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { UserAlreadyExistException } from './exceptions/user-already-exist.exception';
 import { InvalidCredentialException } from './exceptions/invalid-credential.exception';
 import { BlacklistService } from './blacklist.service';
 import { AuthUser } from './dto/authUser.dto';
@@ -23,14 +22,17 @@ export class AuthService {
 
   async signUp(registerDto: RegisterDto) {
     try{
-      const { full_name, email, password } = registerDto;
+      const { full_name, email, password, birth_date } = registerDto;
+      if(!full_name || !email || !password || birth_date){
+        throw new BadRequestException();
+      }
       // Validate and save user to the database
       const holderUser = await this.prisma.user.findFirst({
         where:{ email }
       })
   
       if(holderUser){
-        throw new UserAlreadyExistException();
+        throw new ConflictException("User already exist");
       }
   
       const hashPassword = await bcrypt.hashSync(password, 10);
@@ -39,13 +41,14 @@ export class AuthService {
         data: {
           full_name,
           email,
+          birth_date,
           password: hashPassword,
         },
       });
   
       return "Sign Up successfully";
     } catch (err){
-      throw new ForbiddenException(err);
+      throw new HttpException(err.message, err.status);
     }
   }
 
@@ -78,7 +81,7 @@ export class AuthService {
         expiresIn: this.configService.get<number>('JWT_EXPIRED_TIME')
       };
     } catch(err){
-      throw new ForbiddenException(err);
+      throw new HttpException(err.message, err.status);
     }
   }
 
@@ -90,7 +93,7 @@ export class AuthService {
       await this.blacklistService.addTokenToBlacklist(cacheId, tokenWithoutBearer, expiredAt);
       return 'Logout'
     } catch(err){
-      throw new ForbiddenException(err)
+      throw new HttpException(err.message, err.status);
     }
   }
 }

@@ -1,4 +1,4 @@
-import { BadRequestException, UnauthorizedException , Injectable, ForbiddenException } from '@nestjs/common';
+import { BadRequestException, UnauthorizedException , Injectable, ForbiddenException, HttpException } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 
 import { CommentDto } from './dto/comment.dto'
@@ -29,12 +29,11 @@ export class CommentService {
                 }
             })
         } catch (err){
-            throw new ForbiddenException(err);
+            throw new HttpException(err.message, err.status);
         }
     }
 
     async update(commentId: number, user: AuthUser, comment: UpdateCommentDto){
-
         try{
             const commentExist = await this.prisma.comments.findFirst({
                 where:{
@@ -62,7 +61,7 @@ export class CommentService {
                 }
             })
         } catch(err){
-            throw new ForbiddenException(err)
+            throw new HttpException(err.message, err.status);
         }
     }
 
@@ -85,7 +84,7 @@ export class CommentService {
                 }
             })
         } catch(err){
-            throw new ForbiddenException(err)
+            throw new HttpException(err.message, err.status);
         }
     }
 
@@ -109,7 +108,7 @@ export class CommentService {
                 take
             })
         } catch(err){
-            throw new ForbiddenException(err)
+            throw new HttpException(err.message, err.status);
         }
     }
 }
