@@ -32,17 +32,26 @@ export class UserService {
 
     async update(user: AuthUser, info: UpdateUserDto){
         try{
-            console.log(info);
             const { full_name, birth_date } = info;
-            return await this.prisma.user.update({
+            const convertDate = new Date(birth_date);
+            if(isNaN(convertDate.getMilliseconds())){
+                throw new BadRequestException('Missing required data')
+            }
+            const updated = await this.prisma.user.update({
                 where: { 
                     user_id: user.user_id
                 },
                 data:{
                     full_name,
-                    birth_date
+                    birth_date: convertDate
                 }
             });
+
+            if(!updated){
+                throw new ForbiddenException();
+            }
+
+            return true;
 
         } catch(err){
             throw new HttpException(err.message, err.status);
@@ -56,7 +65,7 @@ export class UserService {
                 data: { 
                     user_id: user.user_id,
                     name: file.filename,
-                    url: file.filename,
+                    url: '/public/img/'+ file.filename,
                     desciption
                 }
             });
@@ -70,7 +79,7 @@ export class UserService {
                     user_id: user.user_id
                 },
                 data: { 
-                    avatar: file.filename,
+                    avatar: image.url,
                 }
             });
         } catch(err){
