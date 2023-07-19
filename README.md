@@ -7,6 +7,7 @@ Capstone ORM Pinterest is a project inspired by the popular website Pinterest. I
 The project utilizes the following technologies:
 
 - [Yarn](https://yarnpkg.com/): Package manager for managing dependencies.
+- [MySQL](https://www.mysql.com/): An open-source relational database management system.
 - [Prisma](https://www.prisma.io/): Database toolkit and ORM (Object-Relational Mapping) for working with databases.
 - [Swagger](https://swagger.io/): Open-source tooling for designing, building, documenting, and consuming RESTful web services.
 
