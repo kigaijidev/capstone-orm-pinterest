@@ -13,7 +13,8 @@ import {
      UploadedFile,
      Res,
      ValidationPipe,
-     UsePipes
+     UsePipes,
+     Put
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiParam, ApiTags } from '@nestjs/swagger';
@@ -36,8 +37,8 @@ export class UserController {
 
     @HttpCode(HttpStatus.OK)
     @Get('info')
-    async user(@Req() req: AuthUser) {
-        return await this.userService.user(req);
+    async user(@Req() req) {
+        return await this.userService.user(req.user);
     }
     
     @HttpCode(HttpStatus.OK)
@@ -49,7 +50,6 @@ export class UserController {
             storage: diskStorage({
                 destination: process.cwd() +'/public/img',
                 filename: (req, file, callback) => {
-                    console.log(file)
                     callback(null, Date.now() + slugify(file.originalname));
                 },
             }),
@@ -60,22 +60,9 @@ export class UserController {
     }
 
     @HttpCode(HttpStatus.OK)
-    @Patch('info')
+    @Put('info')
     @ApiBody({ type: UpdateUserDto })
     async update( @Req() req) {
         return await this.userService.update(req.user, req.body);
-    }
-
-    @HttpCode(HttpStatus.OK)
-    @Get('/:name')
-    async readFile(@Param('name') name: String, @Res() res): Promise<any> {
-        name = name.replace(/[\\\/]/g, '');
-        console.log(name);
-
-        return res.sendFile('/img' + '/' + name, (err) => {
-            if (err) {
-                res.status(err.status).end();
-            }
-        });
     }
 }
