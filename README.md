@@ -18,7 +18,7 @@ To set up the Capstone ORM Pinterest project on your local machine, please follo
 1. Clone the repository:
 
     ```bash
-    git clone <repository_url>
+    git clone https://github.com/Chminh-developer/capstone-orm-pinterest
 
 2. Navigate to the project directory:
 
