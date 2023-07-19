@@ -37,7 +37,7 @@ async function bootstrap() {
 		await prisma.$connect();
 		console.log('Prisma connected to the database.');
 
-		await app.listen(process.env.APP_PORT, () => {
+		await app.listen(process.env.APP_PORT || 3000, () => {
 			console.log('Capstone Pinterest started successfully.');
 		});
 		// Tiếp tục khởi động ứng dụng NestJS
