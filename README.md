@@ -34,21 +34,21 @@ To set up the Capstone ORM Pinterest project on your local machine, please follo
     ```bash
     yarn prisma migrate dev
 
-    This command will apply any pending migrations and create the necessary database tables.
+This command will apply any pending migrations and create the necessary database tables.
 
 5. Start the development server:
 
     ```bash
     yarn start:dev
 
-    The server should now be running at http://localhost:3000
+The server should now be running at http://localhost:3000
 
 6. Visit the Swagger documentation to explore the available API endpoints:
 
     ```bash
     http://localhost:3000/api
 
-    Use this documentation to understand and interact with the various routes provided by the Capstone ORM Pinterest API.
+Use this documentation to understand and interact with the various routes provided by the Capstone ORM Pinterest API.
 
 ## Usage
 To use Capstone ORM Pinterest:
