@@ -2,7 +2,7 @@ import { Controller, Post, Body, Get, UseGuards, Req, HttpCode, HttpStatus, UseP
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 
 @ApiTags('Auth')
@@ -25,7 +25,9 @@ export class AuthController {
         return this.authService.signIn(loginDto);
     }
 
+    @HttpCode(HttpStatus.OK)
     @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
     @Post('logout')
     async logout(@Req() req) {
         await this.authService.logout(req.headers.authorization);

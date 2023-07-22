@@ -22,9 +22,10 @@ export class AuthService {
 
   async signUp(registerDto: RegisterDto) {
     try{
-      const { full_name, email, password, birth_date } = registerDto;
-      if(!full_name || !email || !password || birth_date){
-        throw new BadRequestException();
+      const { full_name, email, password} = registerDto;
+      const birth_date = new Date(registerDto.birth_date);
+      if(!full_name || !email || !password){
+        throw new BadRequestException('Missing data required');
       }
       // Validate and save user to the database
       const holderUser = await this.prisma.user.findFirst({

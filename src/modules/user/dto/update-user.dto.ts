@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsString, MinLength, IsDate, IsDateString} from 'class-validator';
+import { IsString, MinLength, IsDateString} from 'class-validator';
 
 export class UpdateUserDto {
     @IsString()
@@ -13,7 +13,6 @@ export class UpdateUserDto {
     full_name: string;
     
     @IsDateString({ strict: true })
-    @Transform(({ value }) => value.toISOString().split('T')[0])
     @ApiProperty({
         description: 'birth_date',
         example:"1999-01-01",

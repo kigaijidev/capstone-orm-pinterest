@@ -1,31 +1,26 @@
 import { 
-    Body, 
     Controller, 
     Get,
-     HttpCode, 
-     HttpStatus, 
-     Param, 
-     Patch, 
-     Post, 
-     Req, 
-     UseGuards, 
-     UseInterceptors,
-     UploadedFile,
-     Res,
-     ValidationPipe,
-     UsePipes,
-     Put
+    HttpCode, 
+    HttpStatus, 
+    Patch,
+    Req, 
+    UseGuards, 
+    UseInterceptors,
+    UploadedFile,
+    Res,
+    ValidationPipe,
+    UsePipes,
+    Put
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
-import { Request } from 'express';
-import { AuthUser } from '../auth/dto/authUser.dto';
 import { diskStorage } from 'multer';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { FileUploadDto } from '../image/dto/file.upload.dto';
 import slugify from 'slugify';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { AvatarUploadDto } from '../image/dto/avatar.upload.dto';
 
 @Controller('user')
 @ApiTags('User')
@@ -43,7 +38,7 @@ export class UserController {
     
     @HttpCode(HttpStatus.OK)
     @Patch('avatar')
-    @ApiBody({ description: "Choose Image", type: FileUploadDto})
+    @ApiBody({ description: "Choose Image", type: AvatarUploadDto})
     @ApiConsumes("multipart/form-data")
     @UseInterceptors(
         FileInterceptor('file', {
@@ -56,7 +51,7 @@ export class UserController {
         }),
     )
     async uploadAvatar( @Req() req, @UploadedFile() file) {
-        return await this.userService.uploadAvatar(req.user, req, file);
+        return await this.userService.uploadAvatar(req.user, file);
     }
 
     @HttpCode(HttpStatus.OK)

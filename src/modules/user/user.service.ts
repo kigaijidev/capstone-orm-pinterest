@@ -58,15 +58,14 @@ export class UserService {
         }
     }
 
-    async uploadAvatar(user: AuthUser, req: Request, file: Express.Multer.File ){
+    async uploadAvatar(user: AuthUser, file: Express.Multer.File ){
         try{
-            const { desciption } = req.body;
             const image = await this.prisma.images.create({
                 data: { 
                     user_id: user.user_id,
                     name: file.filename,
                     url: '/public/img/'+ file.filename,
-                    desciption
+                    isAvatar: 1,
                 }
             });
 

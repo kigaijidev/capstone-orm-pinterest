@@ -1,9 +1,10 @@
-import { BadRequestException, UnauthorizedException , Injectable, ForbiddenException, HttpException } from '@nestjs/common';
+import { BadRequestException, UnauthorizedException , Injectable, ForbiddenException, HttpException, NotFoundException } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 
 import { CommentDto } from './dto/comment.dto'
 import { AuthUser } from '../auth/dto/authUser.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
+import { ImageIdDto } from '../image/dto/id.dto';
 
 @Injectable()
 export class CommentService {
@@ -12,10 +13,9 @@ export class CommentService {
 
     prisma = new PrismaClient();
 
-    async create(user: AuthUser, comment: CommentDto){
+    async create(user: AuthUser, ImageId: number, content: string){
         try{
-            const { imageId, content } = comment;
-            if(!imageId || !content){
+            if(!content){
                 throw new BadRequestException('Missing required data');
             }
     
@@ -23,7 +23,7 @@ export class CommentService {
             return await this.prisma.comments.create({
                 data:{
                     user_id: user.user_id,
-                    image_id: imageId,
+                    image_id: ImageId,
                     content,
                     comment_date
                 }
@@ -75,7 +75,7 @@ export class CommentService {
             })
     
             if(!commentExist){
-                throw new UnauthorizedException();
+                throw new NotFoundException();
             }
 
             return await this.prisma.comments.delete({

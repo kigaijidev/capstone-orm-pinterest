@@ -16,12 +16,13 @@ export class CommentController {
     @ApiBearerAuth()
     @HttpCode(HttpStatus.CREATED)
     @ApiBody({ type: CommentDto })
-    @Post('')
+    @Post('/:imageId')
     async create(
         @Req() req,
+        @Param() idDto: ImageIdDto,
         @Body() commentDto: CommentDto
     ) {
-        return await this.commentService.create(req.user, commentDto);
+        return await this.commentService.create(req.user, Number(idDto.imageId), commentDto.content);
     }
 
     @UseGuards(JwtAuthGuard)
