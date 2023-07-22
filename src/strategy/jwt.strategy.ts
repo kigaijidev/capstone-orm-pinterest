@@ -30,7 +30,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         const checkExist = await this.prisma.user.findFirst({
           where:{
             user_id: payload.user_id,
-            full_name: payload.full_name,
             email: payload.email
           }
         })

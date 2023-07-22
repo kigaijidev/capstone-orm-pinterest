@@ -24,8 +24,9 @@ model images {
   image_id     Int            @id @default(autoincrement())
   name         String         @db.VarChar(255)
   url          String         @db.VarChar(255)
-  desciption   String?        @db.VarChar(255)
+  description  String?        @db.VarChar(255)
   user_id      Int?
+  isAvatar     Int            @default(0)
   comments     comments[]
   user         user?          @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "images_ibfk_1")
   store_images store_images[]

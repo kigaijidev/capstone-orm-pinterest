@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsString, MinLength, IsDate } from "class-validator";
+import { Transform } from "class-transformer";
+import { IsEmail, IsString, MinLength, IsDate, IsDateString, IsNotEmpty } from "class-validator";
 
 export class RegisterDto {
   @IsString()
@@ -9,11 +10,16 @@ export class RegisterDto {
   })
   full_name: string;
 
-  @IsDate()
+  @IsDateString({ strict: true })
+  @Transform(({ value }) => value.split('T')[0])
+  @IsNotEmpty()
   @ApiProperty({
-    type: Date, example:"1999/01/01", format:"YYYY/MM/DD"
+      description: 'birth_date',
+      example:"1999-01-01",
+      type: String,
+      format:"YYYY-MM-DD"
   })
-  birth_date: Date;
+  birth_date: string;
   
   @IsEmail()
   @ApiProperty({
