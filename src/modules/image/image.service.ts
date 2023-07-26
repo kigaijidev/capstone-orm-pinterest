@@ -14,9 +14,9 @@ export class ImageService {
 	async getListImages(): Promise<images[]> {
 		try {
 			return await this.prisma.images.findMany({
-				where:{
-					isAvatar: 0
-				}
+				where: {
+					isAvatar: 0,
+				},
 			});
 		} catch (error) {
 			throw new HttpException(error.message, error.status);
@@ -45,11 +45,11 @@ export class ImageService {
 				},
 				include: {
 					user: {
-						select:{
+						select: {
 							avatar: true,
 							full_name: true,
-						}
-					}
+						},
+					},
 				},
 			});
 		} catch (error) {
@@ -57,13 +57,17 @@ export class ImageService {
 		}
 	}
 
-	async getImagedIsSavedByImageId(imageId: string): Promise<any> {
+	async getImagedIsSavedByImageId(
+		imageId: string,
+		userId: string,
+	): Promise<any> {
 		try {
 			if (!imageId)
 				throw new BadRequestException('Missing required data');
 			return await this.prisma.store_images.findMany({
 				where: {
 					image_id: +imageId,
+					user_id: +userId,
 				},
 			});
 		} catch (error) {
@@ -71,15 +75,19 @@ export class ImageService {
 		}
 	}
 
-	async addImage(user: AuthUser, req, file: Express.Multer.File ): Promise<any> {
+	async addImage(
+		user: AuthUser,
+		req,
+		file: Express.Multer.File,
+	): Promise<any> {
 		try {
-			const { name,description } = req.body;
+			const { name, description } = req.body;
 			return await this.prisma.images.create({
 				data: {
 					name: name,
-                    url: '/public/img/'+ file.filename,
+					url: '/public/img/' + file.filename,
 					user_id: user.user_id,
-					description
+					description,
 				},
 			});
 		} catch (error) {
@@ -91,9 +99,9 @@ export class ImageService {
 		try {
 			if (!user) throw new UnauthorizedException();
 			return await this.prisma.images.findMany({
-				where: { 
+				where: {
 					user_id: user.user_id,
-					isAvatar: 0
+					isAvatar: 0,
 				},
 			});
 		} catch (error) {
@@ -105,29 +113,28 @@ export class ImageService {
 		try {
 			if (!imageId)
 				throw new BadRequestException('Missing required data');
-			
+
 			const delComment = await this.prisma.comments.deleteMany({
-				where:{
-					image_id: +imageId
-				}
-			})
+				where: {
+					image_id: +imageId,
+				},
+			});
 
 			const delStoreImg = await this.prisma.store_images.deleteMany({
-				where:{
-					image_id: +imageId
-				}
-			})
+				where: {
+					image_id: +imageId,
+				},
+			});
 
-			if(!delComment || !delStoreImg){
+			if (!delComment || !delStoreImg) {
 				throw new ForbiddenException();
 			}
 
 			return await this.prisma.images.delete({
 				where: {
-					image_id: +imageId
+					image_id: +imageId,
 				},
 			});
-
 		} catch (error) {
 			throw new HttpException(error.message, error.status);
 		}

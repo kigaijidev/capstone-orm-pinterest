@@ -50,24 +50,27 @@ export class ImageController {
 
 	@HttpCode(HttpStatus.OK)
 	@Get('/saved-img')
-	getImagedIsSavedByImageId(@Query('imageId') imageId: string): Promise<any> {
-		return this.imageService.getImagedIsSavedByImageId(imageId);
+	getImagedIsSavedByImageId(
+		@Query('imageId') imageId: string,
+		@Query('userId') userId: string,
+	): Promise<any> {
+		return this.imageService.getImagedIsSavedByImageId(imageId, userId);
 	}
 
 	@HttpCode(HttpStatus.CREATED)
-	@ApiBody({ description: "Choose Image", type: FileUploadDto})
-    @ApiConsumes("multipart/form-data")
+	@ApiBody({ description: 'Choose Image', type: FileUploadDto })
+	@ApiConsumes('multipart/form-data')
 	@Post()
 	@UseInterceptors(
-        FileInterceptor('file', {
-            storage: diskStorage({
-                destination: process.cwd() +'/public/img',
-                filename: (req, file, callback) => {
-                    callback(null, Date.now() + slugify(file.originalname));
-                },
-            }),
-        }),
-    )
+		FileInterceptor('file', {
+			storage: diskStorage({
+				destination: process.cwd() + '/public/img',
+				filename: (req, file, callback) => {
+					callback(null, Date.now() + slugify(file.originalname));
+				},
+			}),
+		}),
+	)
 	addImage(@Req() req, @UploadedFile() file): Promise<any> {
 		return this.imageService.addImage(req.user, req, file);
 	}
@@ -76,9 +79,7 @@ export class ImageController {
 	@UseGuards(JwtAuthGuard)
 	@ApiBearerAuth()
 	@Get('/created')
-	getListCreatedImagesByUserId(
-		@Req() req,
-	): Promise<images[]> {
+	getListCreatedImagesByUserId(@Req() req): Promise<images[]> {
 		return this.imageService.getListCreatedImagesByUserId(req.user);
 	}
 
